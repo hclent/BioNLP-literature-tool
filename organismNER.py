@@ -141,7 +141,7 @@ def buildDict(list):
 #
 
 ######## LOADING AND PRE PROCESSING TEXT ##########
-prefix = "/Users/hclent/PycharmProjects/untitled/Crawling/"
+prefix = "/PycharmProjects/untitled/Crawling/"
 
 def loadDocuments(filenamePrefix, maxNum):
 	print(" * load messages: Started .... ")
