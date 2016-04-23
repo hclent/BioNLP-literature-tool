@@ -203,7 +203,7 @@ loadDocuments(prefix, 10)
 
 #TO DO:
 # 1. fix nerNormalize problems
-# 2. Handing typos within the academic journals
+# 2. Handling typos within the academic journals
 # 3. Do lemmatization
 # 4. See how hypernymns perform as a feature
 # 5. modify output for a list
