@@ -69,7 +69,7 @@ def findTools(unigrams, bigrams):
 
 
 
-prefix = "/Users/hclent/PycharmProjects/untitled/Crawling/"
+prefix = "/PycharmProjects/untitled/Crawling/"
 
 def loadDocuments(filenamePrefix, maxNum):
 	print(" * load messages: Started .... ")
