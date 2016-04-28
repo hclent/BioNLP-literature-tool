@@ -10,6 +10,9 @@ Scripts under 'crawler' take a pubmed ID and then crawls PMC in order to scrape 
 #NLP#
 Scripts in 'nlp' are for tokenization, POS tagging, ngrams, and feature based named entity recognition (NER). Linguistics elements will be used as features for the classifer, and the NER will also be used for visualization.
 
+Note: Current feature based NER is being phased out in favor of using Clulab's Scala-based BioNLP NER tool.
+
+
 #Classification#
 Scripts here will be for document classification. Currently, the only script posted looks at cosine similarity as a feature for the classifier. 
 
