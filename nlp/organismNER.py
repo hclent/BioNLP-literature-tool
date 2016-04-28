@@ -16,7 +16,7 @@ from nltk.stem import WordNetLemmatizer
 #Output: NER dict for each doc
 
 
-############ Supervised Organism Named Entity Recognition ##############
+############ Feature Based Organism Named Entity Recognition ##############
 #
 #
 
