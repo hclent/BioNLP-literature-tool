@@ -6,30 +6,34 @@ from nltk.corpus import stopwords
 
 #Vector functions for cosine similarity based classification
 #Vectors must be normalized in order for this to work!
+#These methods are used in cosineClassify.py
 
 
-#cosine similarity
+#Cosine similarity
+#Input: Two vectors
+#Output: Dot product of the vectors
 def cosine(vec1, vec2):
     return dotProduct(vec1, vec2)
 
 
-#get the dot product
+#Get the dot product
+#Input two vectors (type Counters)
 def dotProduct(vec1, vec2):
     runningSum = float(0.0)
-    for key in vec1:
-        value1 = vec1[key]
-        value2 = vec2[key]
+    for val in vec1:
+        value1 = vec1[val]
+        value2 = vec2[val]
         prod = float(value1) * float(value2)
         runningSum += prod
 
     return runningSum
 
 
-#calculate vector length for normalization
+#Calculate vector length for normalization
 def vecLength(vec):
     runningSum = float(0.0)
-    for key in vec:
-        exp = vec[key] ** 2
+    for value in vec:
+        exp = vec[value] ** 2
         runningSum += exp
 
     length = math.sqrt(runningSum)
@@ -37,13 +41,17 @@ def vecLength(vec):
 
 
 #normalize
+#Input: Vector
+#Output: Normalized vector
 def normalize(vec):
     length = vecLength(vec)
-    for key in vec:
-        vec[key] = vec[key] / length
+    for val in vec:
+        vec[val] = vec[val] / length
 
 
-
+#Convert text to a vector space
+#Input: Text
+#Output: Vector
 def text2vec(stringIn):
     #remove punctuation
     translator = str.maketrans({key: None for key in string.punctuation}) #Updated translator for python 3.x
@@ -52,7 +60,7 @@ def text2vec(stringIn):
     #convert to lower-case
     filteredString2 = filteredString1.lower()
 
-    #pplit to words
+    #split to words
     words = filteredString2.split()
 
     #must delete stop words for cosine similarity scores to be representative of document's content!
