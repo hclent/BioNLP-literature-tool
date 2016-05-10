@@ -13,8 +13,9 @@ Scripts in 'nlp' are for tokenization, POS tagging, ngrams, and feature based na
 Note: Current feature based NER is being phased out in favor of using Clulab's Scala-based BioNLP NER tool.
 
 
-#Classification#
-Scripts here will be for document classification. Currently, the only script posted looks at cosine similarity as a feature for the classifier. 
+#Clustering#
+Phasing out of text2vec cosine similarity clustering due to lack of annotated data. 
+Switching to Latent Dirichilet Allocation (LDA) machine learning algorithm for document clustering
 
 #Visualization#
 Will post soon
