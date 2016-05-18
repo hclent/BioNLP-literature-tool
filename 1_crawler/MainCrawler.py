@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import sys
+import time
 
 ## Run in Python3 for handling unicode!
 ## Input: PMC 'cited by' page
@@ -93,6 +94,7 @@ def get_text(list_paper_urls): #Get publication text
 		#print (main_text)
 
 		i += 1
+		time.sleep(5) #Throttle for 5 seconds
 	#return academic_journals
 
 
