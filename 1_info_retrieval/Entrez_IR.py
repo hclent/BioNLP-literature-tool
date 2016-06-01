@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 #and information about pubplications that cite this pmid via PubMedCentral ID's (pmcids)
 
 
-Entrez.email = "hclent@email.arizona.edu"
+Entrez.email = "xxxxx@xxxxxxx.xxx"
 Entrez.tool = "MyInfoRetrieval"
 
 my_pmid = "18269575"
