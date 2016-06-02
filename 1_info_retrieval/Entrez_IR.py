@@ -59,19 +59,29 @@ def getCitedInfo(pmcid_list):
 
 #Input: XML string of PMC entry generated with getContentPMC
 #Output: Abstract and journal text 
+#Very rarely Entrez is unable to provide the XML or there is no main text. Parse PMC handles this.
 def parsePMC(xml_string, pmid):
 	main_text = []
 	root = ET.fromstring(xml_string) #parsed
 	#Get abstract and add to doc
-	abstract = root.find('.//abstract')
-	full_abs = ("".join(abstract.itertext()))
-	main_text.append(full_abs)
-	#Get main text and add to doc
-	text = root.findall('.//p')
-	for t in text:
-		full_text = ("".join(t.itertext()))
-		main_text.append(full_text)
+	try:
+		abstract = root.find('.//abstract')
+		full_abs = ("".join(abstract.itertext()))
+		#print("* Got abstract")
+		main_text.append(full_abs)
+	except Exception as e:   
+		print("The following PMCID is not available") 
+	try:
+		#Get main text and add to doc
+		text = root.findall('.//p')
+		for t in text:
+			full_text = ("".join(t.itertext()))
+			main_text.append(full_text)
+		#print("* Got main text")
+	except Exception as e:
+		print("Only gave us the absract")
 	return main_text
+
 
 
 #Input: pmid and the list of pmcids citing it
