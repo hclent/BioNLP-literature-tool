@@ -10,10 +10,15 @@ import xml.etree.ElementTree as ET
 #and information about pubplications that cite this pmid via PubMedCentral ID's (pmcids)
 
 
-Entrez.email = "xxxxx@xxxxxxx.xxx"
+Entrez.email = "xxxxxx@xxxxx.xxx"
 Entrez.tool = "MyInfoRetrieval"
 
-my_pmid = "18269575"
+#my_pmid = "18952863"
+#How to usefully compare homologous plant genes and chromosomes as DNA sequences.
+#pmid = 18269575
+
+#Finding and Comparing Syntenic Regions among Arabidopsis
+#pmid = 18952863
 
 
 #Input: pmid
@@ -24,10 +29,7 @@ def getMainInfo(pmid):
 	title = record[0]["Title"]
 	authors = record[0]["AuthorList"]
 	journal = record[0]["FullJournalName"]
-	print(title)
-	print(authors)
-	print(journal)
-	print("* * * * * * * * * * * * * * * ")
+	return title, authors, journal
 
 
 #Input: Pmid
@@ -42,19 +44,24 @@ def getCitationIDs(pmid): #about the same speed as MainCrawl.py
 #Input: Citing pmcids
 #Output: Basic info about these pmcids
 def getCitedInfo(pmcid_list): 
+	pmc_titles = []
+	pmc_authors = []
+	pmc_journals = []
+	pmc_urls = []
+
 	for citation in pmcid_list:
 		handle = Entrez.esummary(db="pmc", id=citation)
 		record = Entrez.read(handle)
-		title = record[0]["Title"]
-		authors = record[0]["AuthorList"]
-		journal = record[0]["FullJournalName"]
-		url = "http://www.ncbi.nlm.nih.gov/pmc/articles/PMC"+citation
-		print(title)
-		print(authors)
-		print(journal)
-		print(url)
-		print("* * * * * * * * * * * * * * * ")
+		t = record[0]["Title"]
+		a = record[0]["AuthorList"]
+		j = record[0]["FullJournalName"]
+		u = "http://www.ncbi.nlm.nih.gov/pmc/articles/PMC"+citation
+		pmc_titles.append(t)
+		pmc_authors.append(a)
+		pmc_journals.append(j)
+		pmc_urls.append(u)
 		time.sleep(3)
+	return pmc_titles, pmc_authors, pmc_journals, pmc_urls
 
 
 #Input: XML string of PMC entry generated with getContentPMC
@@ -88,7 +95,7 @@ def parsePMC(xml_string, pmid):
 #For each citing pmc_id, this function gest the xml, which is then parsed by parsePMC()
 #Output: Journal texts for each pmcid
 def getContentPMC(pmid, pmcids_list):
-	i = 4
+	i = 1
 	for citation in pmcids_list:
 		handle = Entrez.efetch(db="pmc", id=citation, rettype='full', retmode="xml")
 		xml_record = handle.read() #xml str
@@ -99,13 +106,12 @@ def getContentPMC(pmid, pmcids_list):
 		time.sleep(3)
 
 
-getMainInfo(my_pmid)
+
 pmc_ids = getCitationIDs(my_pmid)
 #print("CITED PMC IDS: ")
 #print(pmc_ids)
-#amount = len(pmc_ids)
+amount = len(pmc_ids)
 #print("THERE ARE " + str(amount) + " DOCUMENTS")
-getCitedInfo(pmc_ids)
 getContentPMC(my_pmid, pmc_ids)
 
 
