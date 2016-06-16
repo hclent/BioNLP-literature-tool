@@ -3,7 +3,7 @@ from time import time
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 from processors import *
-import re, nltk, json
+import re, nltk, json, pickle
 from json import JSONEncoder
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
@@ -11,13 +11,13 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.datasets import fetch_20newsgroups
 import pprint
 
+
 # source activate pyProcessors #my conda python enviornment for this
 
 # set a PROCESSORS_SERVER environment variable.
 # It may take a minute or so to load the large model files.
-api = ProcessorsAPI(port=8886)
+#api = ProcessorsAPI(port=8886)
 #api.start_server("/Users/hclent/anaconda3/envs/pyProcessors/lib/python3.4/site-packages/processors/processors-server.jar")
-
 
 
 eng_stopwords = nltk.corpus.stopwords.words('english') #remove default english stopwords 
@@ -57,9 +57,7 @@ def preProcessing(text, pmid, doc_num):
 
 #Input: filehandle and max number of documents to process
 #Output: JSONified annotated BioDoc 
-## CHANGE: add 'IF' filehandle for BioDoc already exists, skip it
 def loadDocuments(filenamePrefix, maxNum):
-  #data_samples = [] #need a list of docs as strings
   print("* Loading dataset...")
   i = 1
   for i in range(1, maxNum+1):
@@ -72,79 +70,71 @@ def loadDocuments(filenamePrefix, maxNum):
     print("\n")
 
 prefix = "/Users/hclent/Desktop/BioNLP-literature-tool/1_info_retrieval/18952863_"
-loadDocuments(prefix, 84) #Randomly chose 4 but I have 84 documents with this prefix
+#loadDocuments(prefix, 84)
 
 
-# def grab_lemmas(biodoc):
-#   lemmas_list = biodoc["lemmas"] #list 
-#   keep_lemmas = [w for w in lemmas_list if w.lower() not in eng_stopwords]
-#   keep_lemmas = (' '.join(map(str, keep_lemmas))) #map to string. strings are necessary for the TFIDF
-#   return keep_lemmas
+def grab_lemmas(biodoc):
+  lemmas_list = biodoc["lemmas"] #list 
+  keep_lemmas = [w for w in lemmas_list if w.lower() not in eng_stopwords]
+  keep_lemmas = (' '.join(map(str, keep_lemmas))) #map to string. strings are necessary for the TFIDF
+  return keep_lemmas
 
-# def grab_nes(biodoc):
-#   ners_list = biodoc["nes"] #list 
-#   return ners_list
+def grab_nes(biodoc):
+  ners_list = biodoc["nes"] #list 
+  return ners_list
 
 
-# def loadBioDoc(filenamePrefix, maxNum):
-#   data_samples = []
-#   i = 1
-#   for i in range(1, maxNum+1):
-#     print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
-#     filename = filenamePrefix + str(i) + ".json"
-#     #print(filename)
-#     with open(filename) as data_file:
-#       data = json.load(data_file)
-#       lemmas = grab_lemmas(data)
-#       data_samples.append(lemmas)
-#     i +=1
-#   return data_samples
-
+def loadBioDoc(filenamePrefix, maxNum):
+  data_samples = []
+  i = 1
+  for i in range(1, maxNum+1):
+    #print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
+    filename = filenamePrefix + str(i) + ".json"
+    with open(filename) as data_file:
+      data = json.load(data_file)
+      lemmas = grab_lemmas(data)
+      data_samples.append(lemmas)
+    i +=1
+  return data_samples
 
 
 #json_prefix = '/Users/hclent/Desktop/BioNLP-literature-tool/3_cluster/json_18952863_'
-#data_samples = loadBioDoc(json_prefix, 4)
-
-# dump data_samples to pickle so can work on LDA 
-
-#exit()
-
-
+#data_samples = loadBioDoc(json_prefix, 84)
+#pickle.dump(data_samples, open("18952863_all.p", "wb"))
 ############################# LDA ############################################
-# dataset = fetch_20newsgroups(shuffle=True, random_state=1, remove=('headers', 'footers', 'quotes'))
-# data_samples = dataset.data
+data_samples = pickle.load(open("18952863_all.p", "rb"))
 
-# def get_tfidf(data): #data should be a list of strings for the documents 
-#   print("* Preparing to vectorize data ...")
-#   tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), norm='l2')
-#   print("* Fitting data to vector ...")
-#   tfidf = tfidf_vectorizer.fit_transform(data)
-#   print("* Successfully fit data to the vector !!! ")
-#   return tfidf, tfidf_vectorizer
+def get_tfidf(data): #data should be a list of strings for the documents 
+  print("* Preparing to vectorize data ...")
+  tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), norm='l2')
+  print("* Fitting data to vector ...")
+  tfidf = tfidf_vectorizer.fit_transform(data)
+  print("* Successfully fit data to the vector !!! ")
+  return tfidf, tfidf_vectorizer
 
-# def fit_lda(tfidf):
-#   print("* Initializing Latent Dirichlet Allocation ... ")
-#   #Gets super slow here. Why?
-#   lda = LatentDirichletAllocation(n_topics=10, max_iter=5, learning_method='online', learning_offset=50., random_state=1)
-#   lda.fit(tfidf)
-#   print("* Successfully fit data to the model!!! ")
-#   return lda
+def fit_lda(tfidf):
+  print("* Initializing Latent Dirichlet Allocation ... ")
+  lda = LatentDirichletAllocation(n_topics=5, max_iter=5, learning_method='online', learning_offset=50., random_state=1)
+  lda.fit(tfidf)
+  print("* Successfully fit data to the model!!! ")
+  return lda
 
 
-# def print_top_words(model, feature_names, n_top_words):
-#   for topic_idx, topic in enumerate(model.components_):
-#     print("Topic #%d:" % topic_idx)
-#     print(" ".join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]))
+def print_top_words(model, feature_names, n_top_words):
+  for topic_idx, topic in enumerate(model.components_):
+    print("Topic #%d:" % topic_idx)
+    print(" ".join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]]))
 
 
-# def topics_lda(tf_vectorizer, lda):
-#   print("\nTopics in LDA model:")
-#   tf_feature_names = tf_vectorizer.get_feature_names()
-#   results = print_top_words(lda, tf_feature_names, 10)
-#   #print(tf_feature_names)
+def topics_lda(tf_vectorizer, lda):
+  print("\nTopics in LDA model:")
+  tf_feature_names = tf_vectorizer.get_feature_names()
+  results = print_top_words(lda, tf_feature_names, 6)
+  #print(tf_feature_names)
 
 
-# tfidf, tfidf_vectorizer = get_tfidf(data_samples)
-# lda = fit_lda(tfidf)
-# print("############## RESULTS ###############")
-# topics_lda(tfidf_vectorizer, lda)
+tfidf, tfidf_vectorizer = get_tfidf(data_samples)
+print(tfidf)
+#lda = fit_lda(tfidf)
+#print("############## RESULTS ###############")
+#topics_lda(tfidf_vectorizer, lda)

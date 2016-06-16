@@ -4,6 +4,10 @@ Under construction
 
 Pipeline: information retrieval --> natural language processing --> topic modeling (clustering) --> data visualization --> web interface 
 
+A Google Doc presentation of my pipeline can be found here:
+https://docs.google.com/presentation/d/1zntsTeNRg0tUBChUQBCjK-PbOZamWvaaANVdTegBQNU/edit?usp=sharing
+
+
 #Information retrieval#
 Entrez_IR.py in '1_info_retrieval' takes a pubmed ID and output text files of the publications citing the original pubmedID. This code uses NCBI's API. All citing documents are written to a txt file to undergo nlp.
 

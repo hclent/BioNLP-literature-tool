@@ -9,9 +9,9 @@ from collections import Counter
 #Output: normalized vector (counter), representing stringIn.
 
 #Example
-doc1 = "/Users/hclent/PycharmProjects/untitled/Crawling/7.txt"
-doc2 = "/Users/hclent/PycharmProjects/untitled/Crawling/92.txt"
-movie_review = "/Users/hclent/PycharmProjects/untitled/Crawling/movie.txt"
+doc1 = "7.txt"
+doc2 = "92.txt"
+movie_review = "movie.txt"
 
 
 def loadMessages(filename):

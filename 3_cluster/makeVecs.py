@@ -4,7 +4,9 @@ import string
 import nltk
 from nltk.corpus import stopwords
 
-#Vector functions for cosine similarity based classification
+#June 16, 2016, this code has been moved to the graveyard, since now I'm using tf-idf 
+
+#Vector functions for cosine similarity based classification/clustering
 #Vectors must be normalized in order for this to work!
 #These methods are used in cosineClassify.py
 
