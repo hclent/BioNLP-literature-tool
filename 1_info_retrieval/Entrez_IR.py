@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 #and information about pubplications that cite this pmid via PubMedCentral ID's (pmcids)
 
 
-Entrez.email = "xxxxxx@xxxxx.xxx"
+Entrez.email = "hclent1@gmail.com"
 Entrez.tool = "MyInfoRetrieval"
 
 #my_pmid = "18952863"
@@ -18,7 +18,7 @@ Entrez.tool = "MyInfoRetrieval"
 #pmid = 18269575
 
 #Finding and Comparing Syntenic Regions among Arabidopsis
-#pmid = 18952863
+my_pmid = 18952863
 
 
 #Input: pmid
@@ -108,10 +108,11 @@ def getContentPMC(pmid, pmcids_list):
 
 
 pmc_ids = getCitationIDs(my_pmid)
-#print("CITED PMC IDS: ")
-#print(pmc_ids)
+print("CITED PMC IDS: ")
+print(pmc_ids)
 amount = len(pmc_ids)
+print(amount)
 #print("THERE ARE " + str(amount) + " DOCUMENTS")
-getContentPMC(my_pmid, pmc_ids)
+#getContentPMC(my_pmid, pmc_ids)
 
 

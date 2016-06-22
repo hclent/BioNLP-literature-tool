@@ -69,21 +69,26 @@ def loadDocuments(filenamePrefix, maxNum):
     i +=1
     print("\n")
 
-prefix = "/Users/hclent/Desktop/BioNLP-literature-tool/1_info_retrieval/18952863_"
+prefix = "/Users/hclent/Desktop/data_bionlp/docs/18952863_"
 #loadDocuments(prefix, 84)
 
-
+#Input: Processors annotated biodocs
+#Output: String of lemmas
 def grab_lemmas(biodoc):
   lemmas_list = biodoc["lemmas"] #list 
   keep_lemmas = [w for w in lemmas_list if w.lower() not in eng_stopwords]
   keep_lemmas = (' '.join(map(str, keep_lemmas))) #map to string. strings are necessary for the TFIDF
   return keep_lemmas
 
+
+#Input: Processors annotated biodocs
+#Output: List of named entities 
 def grab_nes(biodoc):
   ners_list = biodoc["nes"] #list 
   return ners_list
 
-
+#Input: Processors annotated biodocs (from JSON)
+#Output: List of strings of all lemmas 
 def loadBioDoc(filenamePrefix, maxNum):
   data_samples = []
   i = 1
@@ -98,7 +103,7 @@ def loadBioDoc(filenamePrefix, maxNum):
   return data_samples
 
 
-#json_prefix = '/Users/hclent/Desktop/BioNLP-literature-tool/3_cluster/json_18952863_'
+json_prefix = '/Users/hclent/Desktop/data_bionlp/json_18952863_'
 #data_samples = loadBioDoc(json_prefix, 84)
 #pickle.dump(data_samples, open("18952863_all.p", "wb"))
 ############################# LDA ############################################
@@ -112,9 +117,10 @@ def get_tfidf(data): #data should be a list of strings for the documents
   print("* Successfully fit data to the vector !!! ")
   return tfidf, tfidf_vectorizer
 
+
 def fit_lda(tfidf):
   print("* Initializing Latent Dirichlet Allocation ... ")
-  lda = LatentDirichletAllocation(n_topics=5, max_iter=5, learning_method='online', learning_offset=50., random_state=1)
+  lda = LatentDirichletAllocation(n_topics=3, max_iter=25, learning_method='online', learning_offset=50., random_state=1)
   lda.fit(tfidf)
   print("* Successfully fit data to the model!!! ")
   return lda
@@ -134,7 +140,7 @@ def topics_lda(tf_vectorizer, lda):
 
 
 tfidf, tfidf_vectorizer = get_tfidf(data_samples)
-print(tfidf)
-#lda = fit_lda(tfidf)
-#print("############## RESULTS ###############")
-#topics_lda(tfidf_vectorizer, lda)
+#print(tfidf)
+lda = fit_lda(tfidf)
+print("############## RESULTS ###############")
+topics_lda(tfidf_vectorizer, lda)
