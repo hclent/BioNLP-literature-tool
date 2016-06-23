@@ -17,7 +17,7 @@ def get_tfidf(data):
 #Input: TFIDF matrix (X) and TfidfVectorizer
 #Output: json dict ready for D3 visualization
 #Output: this dict has Latent Semantic Analysis topics (concepts) and topic words
-#To Do: Use dimensionality reduction for something... 
+#To Do: Normalization with make_pipeline??? But make_pipeline has no components_
 def do_LSA(X, vectorizer): 
   lsa = TruncatedSVD(n_components=3, n_iter=100)
   lsa_results = lsa.fit(X)

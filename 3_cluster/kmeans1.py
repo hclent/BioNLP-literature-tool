@@ -1,37 +1,51 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans, MiniBatchKMeans
-from sklearn import metrics
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.decomposition import TruncatedSVD
-from sklearn.decomposition import PCA
-from sklearn.decomposition import RandomizedPCA
-from sklearn.preprocessing import scale
-from sklearn.manifold import MDS
-from sklearn.metrics import euclidean_distances
-import plotly.plotly as py
-import plotly.graph_objs as go
-import pandas as pd
-import numpy as np
-from scipy import cluster
-import matplotlib.pyplot as plt
-from matplotlib.collections import LineCollection
-import sys, pickle, math, random 
-from collections import defaultdict
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
+from sklearn.cluster import KMeans
+import sys, pickle, math, random
 
-data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed 
+data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed already 
 
 
 def get_tfidf(data): #data should be a list of strings for the documents 
-  print("Making tfidf with the data ...")
-  tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 3), norm='l2')
-  print("make the vectorizor ...")
-  tfidf = tfidf_vectorizer.fit_transform(data) #tfidf is sparse matrix 
-  print("fit the X ...")
+  print("* Making tfidf with the data ...")
+  tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 3), norm='l2') #l2 projected on the euclidean unit sphere
+  tfidf = tfidf_vectorizer.fit_transform(data)
   return tfidf, tfidf_vectorizer
 
-tfidf, tfidf_vectorizer = get_tfidf(data_samples)
-#print(tfidf)
-print(tfidf.shape) 
+tfidfX, tfidf_vectorizer = get_tfidf(data_samples)
+print(tfidfX.toarray())
+print(tfidfX.shape)
+print()
 
+def get_hashing(data):
+  print("* Making hashing vectorizor with the data ...")
+  hasher = HashingVectorizer(stop_words='english', ngram_range=(1,3), norm='l2', non_negative=False) #l2 projected on the euclidean unit sphere
+  hX = hasher.fit_transform(data)
+  return hX, hasher
+
+
+hX, hasher = get_hashing(data_samples)
+print(hX.toarray())
+print(hX.shape)
+print()
+
+#Truncated SVD (LSA) for dimensionality reduction
+def dimen_reduce(sparse_matrix):
+  print("* Performing SVD on sparse matrix ... ")
+  svd = TruncatedSVD(n_components=3, n_iter=100)
+  normalizer = Normalizer(copy=False)
+  lsa = make_pipeline(svd, normalizer)
+  X = lsa.fit_transform(sparse_matrix)
+  return X
+
+svdX = dimen_reduce(hX)
+print(svdX)
+print(svdX.shape)
+print()
 
 def do_kemeans(sparse_matrix):
     num_clusters = 3
@@ -41,23 +55,21 @@ def do_kemeans(sparse_matrix):
     return clusters
 
 
-# np.random.seed(123)
-# tests = np.reshape( np.random.uniform(0,100,60), (30,2) )
-# #print(tests[1:4])
+kmclusters_T = do_kemeans(tfidfX) #list of cluster assignments
+print("K-means with TF-IDF ... ")
+print(kmclusters_T)
+print()
 
-# #plot variance for each value for 'k' between 1,10
-# initial = [cluster.vq.kmeans(tests,i) for i in range(1,10)]
-# # plt.plot([var for (cent,var) in initial])
-# # plt.show()
+kmclusters_H = do_kemeans(hX) #list of cluster assignments
+print("K-means with Hashing Vectors ... ")
+print(kmclusters_H)
+print()
 
-# cent, var = initial[3]
-# #use vq() to get as assignment for each obs.
-# assignment,cdist = cluster.vq.vq(tests,cent)
-# plt.scatter(tests[:,0], tests[:,1], c=assignment)
-# plt.show()
+kmclusters_L = do_kemeans(svdX) #list of cluster assignments
+print("K-means with Dimensionality-Reduced Vectors ... ")
+print(kmclusters_L)
+print()
 
-kmclusters = do_kemeans(tfidf) #list of cluster assignments
-print(kmclusters)
 
 
 # doc_names = ['PMC4895484', 'PMC4867222', 'PMC4851370', 'PMC4832253', 
@@ -73,19 +85,3 @@ print(kmclusters)
 # 'PMC3355756', 'PMC3326336', 'PMC3280228', 'PMC3271752', 'PMC3269863', 'PMC3240960', 'PMC3219971', 
 # 'PMC3203428', 'PMC3152334', 'PMC3095355', 'PMC3053395', 'PMC3049755', 'PMC3045888', 'PMC2924827', 
 # 'PMC2893956', 'PMC2886086', 'PMC2853686', 'PMC2817432']
-
-# def makeDict(clusters, labels):
-#   combined = list(zip(labels, clusters))
-#   c0_Dict = defaultdict(lambda: 0, size = 743)
-#   c1_Dict = defaultdict(lambda: 1)
-#   c2_Dict = defaultdict(lambda: 2)
-#   for key, values in combined:
-#     if values == 0:
-#       c0_Dict[key] == values
-#     if values == 1:
-#       c1_Dict[key] == values
-#     if values == 2:
-#       c2_Dict[key] == values
-#   return c0_Dict, c1_Dict, c2_Dict
-
-
