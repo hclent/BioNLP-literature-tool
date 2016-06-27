@@ -5,7 +5,14 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
 from sklearn.cluster import KMeans
-import sys, pickle, math, random
+import sys, pickle, math, random, numpy
+import plotly.plotly as py
+import pandas as pd
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed already 
 
@@ -16,10 +23,10 @@ def get_tfidf(data): #data should be a list of strings for the documents
   tfidf = tfidf_vectorizer.fit_transform(data)
   return tfidf, tfidf_vectorizer
 
-tfidfX, tfidf_vectorizer = get_tfidf(data_samples)
-print(tfidfX.toarray())
-print(tfidfX.shape)
-print()
+#tfidfX, tfidf_vectorizer = get_tfidf(data_samples)
+# print(tfidfX.toarray())
+# print(tfidfX.shape)
+# print()
 
 def get_hashing(data):
   print("* Making hashing vectorizor with the data ...")
@@ -29,9 +36,9 @@ def get_hashing(data):
 
 
 hX, hasher = get_hashing(data_samples)
-print(hX.toarray())
-print(hX.shape)
-print()
+# print(hX.toarray())
+# print(hX.shape)
+# print()
 
 #Truncated SVD (LSA) for dimensionality reduction
 def dimen_reduce(sparse_matrix):
@@ -40,36 +47,65 @@ def dimen_reduce(sparse_matrix):
   normalizer = Normalizer(copy=False)
   lsa = make_pipeline(svd, normalizer)
   X = lsa.fit_transform(sparse_matrix)
+  explained_variance = svd.explained_variance_ratio_.sum()
+  print("Explained variance of the SVD step: {}%".format(
+    int(explained_variance * 100)))
   return X
 
 svdX = dimen_reduce(hX)
 print(svdX)
-print(svdX.shape)
-print()
+# print(svdX.shape) #(84, 3)
+
+
 
 def do_kemeans(sparse_matrix):
     num_clusters = 3
     km = KMeans(init='k-means++', n_clusters=num_clusters)
     km.fit(sparse_matrix)
     clusters = km.labels_.tolist()
-    return clusters
+    return km, clusters
 
 
-kmclusters_T = do_kemeans(tfidfX) #list of cluster assignments
-print("K-means with TF-IDF ... ")
-print(kmclusters_T)
-print()
+# kmclusters_T = do_kemeans(tfidfX) #list of cluster assignments
+# print("K-means with TF-IDF ... ")
+# print(kmclusters_T)
+# print()
 
-kmclusters_H = do_kemeans(hX) #list of cluster assignments
-print("K-means with Hashing Vectors ... ")
-print(kmclusters_H)
-print()
+# kmclusters_H = do_kemeans(hX) #list of cluster assignments
+# print("K-means with Hashing Vectors ... ")
+# print(kmclusters_H)
+# print()
 
-kmclusters_L = do_kemeans(svdX) #list of cluster assignments
+kmeans, kmclusters_L = do_kemeans(svdX) #list of cluster assignments
 print("K-means with Dimensionality-Reduced Vectors ... ")
 print(kmclusters_L)
 print()
 
+
+##############################################################
+scatter = dict(
+    mode = "markers",
+    name = "y",
+    type = "scatter3d",    
+    x = kmclusters_L['x'], y = kmclusters_L['y'], z = kmclusters_L['z'],
+    marker = dict(size=2, color="rgb(23, 190, 207)"))
+
+clusters = dict(
+    alphahull = 7,
+    name = "y",
+    opacity = 0.1,
+    type = "mesh3d",    
+    x = svdX['x'], y = svdX['y'], z = svdX['z'])
+
+layout = dict(
+    title = '3d point clustering',
+    scene = dict(
+        xaxis = dict( zeroline=False ),
+        yaxis = dict( zeroline=False ),
+        zaxis = dict( zeroline=False )))
+
+fig = dict( data=[scatter, clusters], layout=layout )
+py.iplot(fig, filename='3d point clustering')
 
 
 # doc_names = ['PMC4895484', 'PMC4867222', 'PMC4851370', 'PMC4832253', 

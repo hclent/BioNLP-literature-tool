@@ -18,7 +18,7 @@ Entrez.tool = "MyInfoRetrieval"
 #pmid = 18269575
 
 #Finding and Comparing Syntenic Regions among Arabidopsis
-my_pmid = 18952863
+my_pmid = 19110700
 
 
 #Input: pmid
@@ -112,7 +112,7 @@ print("CITED PMC IDS: ")
 print(pmc_ids)
 amount = len(pmc_ids)
 print(amount)
-#print("THERE ARE " + str(amount) + " DOCUMENTS")
-#getContentPMC(my_pmid, pmc_ids)
+print("THERE ARE " + str(amount) + " DOCUMENTS")
+getContentPMC(my_pmid, pmc_ids)
 
 
