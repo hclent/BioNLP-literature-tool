@@ -1,7 +1,6 @@
 from __future__ import print_function
-from time import time
 from processors import *
-import re, nltk, json, pickle
+import re, nltk, json, pickle, time, datetime
 from json import JSONEncoder
 from nltk.corpus import stopwords
 
@@ -9,7 +8,8 @@ from nltk.corpus import stopwords
 
 # set a PROCESSORS_SERVER environment variable.
 # It may take a minute or so to load the large model files.
-api = ProcessorsAPI(port=8886)
+p = '/Users/hclent/anaconda3/envs/pyProcessors/lib/python3.4/site-packages/processors/processors-server.jar'
+api = ProcessorsAPI(port=8886, jar_path=p, keep_alive=True)
 #api.start_server("/Users/hclent/anaconda3/envs/pyProcessors/lib/python3.4/site-packages/processors/processors-server.jar")
 
 
@@ -50,23 +50,25 @@ def preProcessing(text, pmid, doc_num):
 
 #Input: filehandle and max number of documents to process
 #Output: JSONified annotated BioDoc 
-def loadDocuments(filenamePrefix, maxNum):
+def loadDocuments(maxNum, pmid):
   print("* Loading dataset...")
   i = 1
-  for i in range(1, maxNum+1):
+  filenamePrefix = "/Users/hclent/Desktop/data_bionlp/"+pmid+"_"
+  print(filenamePrefix)
+  for i in range(1, int(maxNum)+1):
     print("* Loading document #" + str(i) + " ...")
     filename = filenamePrefix + str(i) + ".txt"
     text = open(filename, 'r')
     text = text.read()
-    preProcessing(text,18952863,i)
+    preProcessing(text, pmid, i)
     i +=1
     print("\n")
 
-#prefix = "/Users/hclent/Desktop/data_bionlp/docs/18952863_"
-prefix = "/home/hclent/data/18778718_"
-loadDocuments(prefix, 3)
 
-
+# print()
+# t0 = time.time()
+# loadDocuments(41, "17347674")
+# print("annotated docs: done in %0.3fs." % (time.time() - t0))
 
 
 ####################################
@@ -87,9 +89,12 @@ def grab_nes(biodoc):
 
 #Input: Processors annotated biodocs (from JSON)
 #Output: List of strings of all lemmas 
-def loadBioDoc(filenamePrefix, maxNum):
+def loadBioDoc(maxNum, pmid):
   data_samples = []
+  nes_list = []
   i = 1
+  filenamePrefix = '/Users/hclent/Desktop/data_bionlp/json_'+(pmid)+'_'
+  print(filenamePrefix)
   for i in range(1, maxNum+1):
     #print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
     filename = filenamePrefix + str(i) + ".json"
@@ -97,10 +102,12 @@ def loadBioDoc(filenamePrefix, maxNum):
       data = json.load(data_file)
       lemmas = grab_lemmas(data)
       data_samples.append(lemmas)
+      nes = grab_nes(data)
+      nes_list.append(nes)
+
     i +=1
-  return data_samples
+  return data_samples, nes_list
 
 
-#json_prefix = '/Users/hclent/Desktop/data_bionlp/json_18952863_'
-#data_samples = loadBioDoc(json_prefix, 84)
-#pickle.dump(data_samples, open("18952863_all.p", "wb"))
+#data_samples, nes_list = loadBioDoc(84, "18952863")
+#pickle.dump(nes_list, open("18952863_NES.p", "wb"))
