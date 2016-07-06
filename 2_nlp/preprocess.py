@@ -1,6 +1,6 @@
 from __future__ import print_function
 from processors import *
-import re, nltk, json, pickle, time, datetime
+import re, nltk, json, pickle, time, datetime, os.path
 from json import JSONEncoder
 from nltk.corpus import stopwords
 
@@ -8,15 +8,12 @@ from nltk.corpus import stopwords
 
 # set a PROCESSORS_SERVER environment variable.
 # It may take a minute or so to load the large model files.
-p = '/Users/hclent/anaconda3/envs/pyProcessors/lib/python3.4/site-packages/processors/processors-server.jar'
-api = ProcessorsAPI(port=8886, jar_path=p, keep_alive=True)
-#api.start_server("/Users/hclent/anaconda3/envs/pyProcessors/lib/python3.4/site-packages/processors/processors-server.jar")
+p = '/home/hclent/anaconda3/envs/py34/lib/python3.4/site-packages/processors/processors-server.jar'
+api = ProcessorsAPI(port=4242, jar_path=p, keep_alive=True)
+#api.start_server(p)
 
 
 eng_stopwords = nltk.corpus.stopwords.words('english') #remove default english stopwords 
-bio_stopwords = ['et', 'al', 'fig', 'author'] #add hand picked bio stopwords to stopwords
-for word in bio_stopwords:
-	eng_stopwords.append(word)
 
 
 #Input: Data that you want to be JSONified
@@ -36,14 +33,21 @@ def preProcessing(text, pmid, doc_num):
   print("* Preprocessing the text ... ")
   clean_text = re.sub('\\\\n', ' ', text) #replace \n with a space
   clean_text = re.sub('\([ATGC]*\)', '', clean_text) #delete any DNA seqs
-  clean_text = re.sub('(\(|\)|\'|\]|\[|\\|\,)', '', clean_text) #delete certain punctuation
+  clean_text = re.sub('(\(|\)|\'|\]|\[|\\|\,)', '', clean_text) #delete certain stray punctuation
+  clean_text = re.sub('\\\\xa0\d*\.?\d?[\,\-]?\d*\,?\d*', '', clean_text) #delete formatting around figures
+  clean_text = re.sub('et\sal\.', ' ', clean_text) #replace "et al." with a space
+  clean_text = re.sub('\s\d{4}[\s\.\,\;\-]?(\d{4})?', '', clean_text) #delete years
+  clean_text = re.sub('[\.\,]\d{1,2}[\,\-]?(\d{1,2})?\,?', '', clean_text) #delete citations
+  clean_text = re.sub('Fig\.|Figure', '', clean_text) #delete 'fig.' and 'figure'
   clean_text = clean_text.lower()
   print("* Annotating with the Processors ...")
   print("* THIS MAY TAKE A WHILE ...")
   biodoc = api.bionlp.annotate(clean_text) #annotates to JSON
   print("* Successfully did the preprocessing !!!")
   print("* Dumping JSON ... ")
-  with open('json_'+(str(pmid))+'_'+str(doc_num)+'.json', 'w') as outfile:
+  save_path = '/home/hclent/data/' #must save to data
+  completeName = os.path.join(save_path, ('doc_'+(str(pmid))+'_'+str(doc_num)+'.json'))
+  with open(completeName, 'w') as outfile:
     json.dump(biodoc, outfile, default=dumper, indent=2)
   print("* Dumped to JSON !!! ")
 
@@ -53,7 +57,7 @@ def preProcessing(text, pmid, doc_num):
 def loadDocuments(maxNum, pmid):
   print("* Loading dataset...")
   i = 1
-  filenamePrefix = "/Users/hclent/Desktop/data_bionlp/"+pmid+"_"
+  filenamePrefix = "/home/hclent/data/"+pmid+"_"
   print(filenamePrefix)
   for i in range(1, int(maxNum)+1):
     print("* Loading document #" + str(i) + " ...")
@@ -66,9 +70,9 @@ def loadDocuments(maxNum, pmid):
 
 
 # print()
-# t0 = time.time()
-# loadDocuments(41, "17347674")
-# print("annotated docs: done in %0.3fs." % (time.time() - t0))
+t0 = time.time()
+loadDocuments(41, "17347674")
+print("annotated docs: done in %0.3fs." % (time.time() - t0))
 
 
 ####################################
@@ -93,10 +97,10 @@ def loadBioDoc(maxNum, pmid):
   data_samples = []
   nes_list = []
   i = 1
-  filenamePrefix = '/Users/hclent/Desktop/data_bionlp/json_'+(pmid)+'_'
+  filenamePrefix = '/home/hclent/data/doc_'+(pmid)+'_'
   print(filenamePrefix)
   for i in range(1, maxNum+1):
-    #print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
+    print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
     filename = filenamePrefix + str(i) + ".json"
     with open(filename) as data_file:
       data = json.load(data_file)
@@ -108,6 +112,3 @@ def loadBioDoc(maxNum, pmid):
     i +=1
   return data_samples, nes_list
 
-
-#data_samples, nes_list = loadBioDoc(84, "18952863")
-#pickle.dump(nes_list, open("18952863_NES.p", "wb"))
