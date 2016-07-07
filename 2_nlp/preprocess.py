@@ -24,15 +24,16 @@ def dumper(obj):
   except:
     return obj.__dict__
 
+
 #Input: String(text), pmid, doc_num
 #Output: This method cleans the text of newline markups, DNA sequences, and some punctuation
 #Output: Then it makes a "biodoc" using the PyProcessor's "BioNLP" Processor. This step takes a while for longer docs
 #Output: This doc is saved to JSON. 
-#Output: pmid and doc_num are for naming the JSON filename 
+#Output: pmid and doc_num are for naming the JSON filename
+# TO DO : preProcessing for math  
 def preProcessing(text, pmid, doc_num):
   print("* Preprocessing the text ... ")
   clean_text = re.sub('\\\\n', ' ', text) #replace \n with a space
-  #clean_text = re.sub('\s{5,50}', '', clean_text) #for anything with 5-20 spaces between them smooth them together. This is intended to help with math
   clean_text = re.sub('\([ATGC]*\)', '', clean_text) #delete any DNA seqs
   clean_text = re.sub('(\(|\)|\'|\]|\[|\\|\,)', '', clean_text) #delete certain stray punctuation
   clean_text = re.sub('\\\\xa0\d*\.?\d?[\,\-]?\d*\,?\d*', '', clean_text) #delete formatting around figures
@@ -73,9 +74,9 @@ def loadDocuments(maxNum, pmid):
 
 
 # print()
-t0 = time.time()
-loadDocuments(35, "18952863")
-print("annotated docs: done in %0.3fs." % (time.time() - t0))
+# t0 = time.time()
+# loadDocuments(27, "18952863")
+# print("annotated docs: done in %0.3fs." % (time.time() - t0))
 
 
 ####################################
@@ -93,6 +94,7 @@ def grab_lemmas(biodoc):
 def grab_nes(biodoc):
   ners_list = biodoc["nes"] #list 
   return ners_list
+
 
 #Input: Processors annotated biodocs (from JSON)
 #Output: List of strings of all lemmas 
@@ -114,4 +116,5 @@ def loadBioDoc(maxNum, pmid):
 
     i +=1
   return data_samples, nes_list
+
 
