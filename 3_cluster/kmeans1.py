@@ -2,11 +2,9 @@ from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.decomposition import NMF
 from sklearn.cluster import KMeans
 import sys, pickle, math, random, numpy, time 
-import plotly.plotly as py
-import plotly.graph_objs as go
-py.sign_in('hclent', 'eeg49e9880')
 
-data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed already 
+
+#data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed already 
 
 #Input: Eata_samples (list of lists containing strings)
 #Output: Sparse matrix, l2 normalization for preserving Euclidean distance

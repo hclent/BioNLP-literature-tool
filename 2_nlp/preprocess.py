@@ -10,7 +10,6 @@ from nltk.corpus import stopwords
 # It may take a minute or so to load the large model files.
 p = '/home/hclent/anaconda3/envs/py34/lib/python3.4/site-packages/processors/processors-server.jar'
 api = ProcessorsAPI(port=4242, jar_path=p, keep_alive=True)
-#api.start_server(p)
 
 
 eng_stopwords = nltk.corpus.stopwords.words('english') #remove default english stopwords 
@@ -56,10 +55,10 @@ def preProcessing(text, pmid, doc_num):
 #Output: JSONified annotated BioDoc 
 def loadDocuments(maxNum, pmid):
   print("* Loading dataset...")
-  i = 1
+  i = 34
   filenamePrefix = "/home/hclent/data/"+pmid+"_"
   print(filenamePrefix)
-  for i in range(1, int(maxNum)+1):
+  for i in range(34, int(maxNum)+1):
     print("* Loading document #" + str(i) + " ...")
     filename = filenamePrefix + str(i) + ".txt"
     text = open(filename, 'r')
@@ -70,9 +69,9 @@ def loadDocuments(maxNum, pmid):
 
 
 # print()
-t0 = time.time()
-loadDocuments(41, "17347674")
-print("annotated docs: done in %0.3fs." % (time.time() - t0))
+#t0 = time.time()
+#loadDocuments(66, "18269575")
+#print("annotated docs: done in %0.3fs." % (time.time() - t0))
 
 
 ####################################
@@ -111,4 +110,6 @@ def loadBioDoc(maxNum, pmid):
 
     i +=1
   return data_samples, nes_list
+
+
 
