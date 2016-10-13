@@ -16,9 +16,7 @@ Entrez.tool = "MyInfoRetrieval"
 #my_pmid = "18952863"
 #How to usefully compare homologous plant genes and chromosomes as DNA sequences.
 #pmid = 18269575
-
 #Finding and Comparing Syntenic Regions among Arabidopsis
-my_pmid = 19110700
 
 
 #Input: pmid
@@ -106,13 +104,35 @@ def getContentPMC(pmid, pmcids_list):
 		time.sleep(3)
 
 
+# my_pmid = 19110700
 
-pmc_ids = getCitationIDs(my_pmid)
-print("CITED PMC IDS: ")
-print(pmc_ids)
-amount = len(pmc_ids)
-print(amount)
-print("THERE ARE " + str(amount) + " DOCUMENTS")
-getContentPMC(my_pmid, pmc_ids)
+# t, a, j = getMainInfo(my_pmid)
+# print("* INPUT PMID INFO: ")
+# print("title: " + str(t))
+# print("authors: " + str(a))
+# print("journal: " + str(j))
+# print()
+# pmc_ids = getCitationIDs(my_pmid)
+# print("* CITED PMC IDS: ")
+# print(pmc_ids)
+# print()
+# amount = len(pmc_ids)
+# print(amount)
+# print("* THERE ARE " + str(amount) + " DOCUMENTS")
+# print()
+# pmc_titles, pmc_authors, pmc_journals, pmc_urls = getCitedInfo(pmc_ids)
+# cite_info = list(zip(pmc_titles, pmc_authors, pmc_journals, pmc_urls))
+# print("* INFORMATION FOR CITED DOCS: ")
+# print("titles: " + str(pmc_titles))
+# print()
+# print("authors: " + str(pmc_authors))
+# print()
+# print("journals: " + str(pmc_journals))
+# print()
+# print("urls: " + str(pmc_urls))
+# print()
+# print("* ORGANIZED INFO: ")
+# for i in cite_info:
+# 	print(str(i) + "\n")
 
 

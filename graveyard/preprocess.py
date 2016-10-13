@@ -8,8 +8,14 @@ from nltk.corpus import stopwords
 
 # set a PROCESSORS_SERVER environment variable.
 # It may take a minute or so to load the large model files.
+<<<<<<< HEAD
 p = '/home/hclent/anaconda3/envs/py34/lib/python3.4/site-packages/processors/processors-server.jar'
 api = ProcessorsAPI(port=4242, jar_path=p, keep_alive=True)
+=======
+p = '/Users/hclent/anaconda3/envs/py34/lib/python3.4/site-packages/processors/processors-server.jar'
+api = ProcessorsAPI(port=8886, jar_path=p, keep_alive=True)
+#api.start_server(p)
+>>>>>>> 6d8656d8cf3ef7cbd2944c525aff2e0dac6d1185
 
 
 eng_stopwords = nltk.corpus.stopwords.words('english') #remove default english stopwords 
@@ -23,11 +29,13 @@ def dumper(obj):
   except:
     return obj.__dict__
 
+
 #Input: String(text), pmid, doc_num
 #Output: This method cleans the text of newline markups, DNA sequences, and some punctuation
 #Output: Then it makes a "biodoc" using the PyProcessor's "BioNLP" Processor. This step takes a while for longer docs
 #Output: This doc is saved to JSON. 
-#Output: pmid and doc_num are for naming the JSON filename 
+#Output: pmid and doc_num are for naming the JSON filename
+# TO DO : preProcessing for math  
 def preProcessing(text, pmid, doc_num):
   print("* Preprocessing the text ... ")
   clean_text = re.sub('\\\\n', ' ', text) #replace \n with a space
@@ -39,26 +47,35 @@ def preProcessing(text, pmid, doc_num):
   clean_text = re.sub('[\.\,]\d{1,2}[\,\-]?(\d{1,2})?\,?', '', clean_text) #delete citations
   clean_text = re.sub('Fig\.|Figure', '', clean_text) #delete 'fig.' and 'figure'
   clean_text = clean_text.lower()
-  print("* Annotating with the Processors ...")
-  print("* THIS MAY TAKE A WHILE ...")
-  biodoc = api.bionlp.annotate(clean_text) #annotates to JSON
-  print("* Successfully did the preprocessing !!!")
-  print("* Dumping JSON ... ")
-  save_path = '/home/hclent/data/' #must save to data
-  completeName = os.path.join(save_path, ('doc_'+(str(pmid))+'_'+str(doc_num)+'.json'))
-  with open(completeName, 'w') as outfile:
-    json.dump(biodoc, outfile, default=dumper, indent=2)
-  print("* Dumped to JSON !!! ")
+  print(clean_text)
+  print()
+  # print("* Annotating with the Processors ...")
+  # print("* THIS MAY TAKE A WHILE ...")
+  # biodoc = api.bionlp.annotate(clean_text) #annotates to JSON
+  # print("* Successfully did the preprocessing !!!")
+  # print("* Dumping JSON ... ")
+  # save_path = '/home/hclent/data/' #must save to data
+  # completeName = os.path.join(save_path, ('doc_'+(str(pmid))+'_'+str(doc_num)+'.json'))
+  # with open(completeName, 'w') as outfile:
+  #   json.dump(biodoc, outfile, default=dumper, indent=2)
+  # print("* Dumped to JSON !!! ")
 
 
 #Input: filehandle and max number of documents to process
 #Output: JSONified annotated BioDoc 
 def loadDocuments(maxNum, pmid):
   print("* Loading dataset...")
+<<<<<<< HEAD
   i = 34
   filenamePrefix = "/home/hclent/data/"+pmid+"_"
   print(filenamePrefix)
   for i in range(34, int(maxNum)+1):
+=======
+  i = 27
+  filenamePrefix = "/Users/hclent/Desktop/data_bionlp/"+pmid+"_"
+  print(filenamePrefix)
+  for i in range(27, int(maxNum)+1):
+>>>>>>> 6d8656d8cf3ef7cbd2944c525aff2e0dac6d1185
     print("* Loading document #" + str(i) + " ...")
     filename = filenamePrefix + str(i) + ".txt"
     text = open(filename, 'r')
@@ -69,9 +86,15 @@ def loadDocuments(maxNum, pmid):
 
 
 # print()
+<<<<<<< HEAD
 #t0 = time.time()
 #loadDocuments(66, "18269575")
 #print("annotated docs: done in %0.3fs." % (time.time() - t0))
+=======
+# t0 = time.time()
+# loadDocuments(27, "18952863")
+# print("annotated docs: done in %0.3fs." % (time.time() - t0))
+>>>>>>> 6d8656d8cf3ef7cbd2944c525aff2e0dac6d1185
 
 
 ####################################
@@ -90,13 +113,14 @@ def grab_nes(biodoc):
   ners_list = biodoc["nes"] #list 
   return ners_list
 
+
 #Input: Processors annotated biodocs (from JSON)
 #Output: List of strings of all lemmas 
 def loadBioDoc(maxNum, pmid):
   data_samples = []
   nes_list = []
   i = 1
-  filenamePrefix = '/home/hclent/data/doc_'+(pmid)+'_'
+  filenamePrefix = '/Users/hclent/Desktop/data_bionlp/doc_'+(pmid)+'_'
   print(filenamePrefix)
   for i in range(1, maxNum+1):
     print("* Loading annotated BioDoc from JSON #" + str(i) + " ...")
@@ -112,4 +136,7 @@ def loadBioDoc(maxNum, pmid):
   return data_samples, nes_list
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6d8656d8cf3ef7cbd2944c525aff2e0dac6d1185

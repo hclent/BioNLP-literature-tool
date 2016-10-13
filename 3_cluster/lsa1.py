@@ -3,7 +3,7 @@ from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD
 import pickle, re 
 
-data_samples = pickle.load(open("18952863_all.p", "rb")) #pre-processed 
+data_samples = pickle.load(open("coge_docs.pickle", "rb")) #pre-processed 
 
 #Input: a list of strings for the document
 #Output: TFIDF matrix X, and TfidfVectorizer function
@@ -19,7 +19,7 @@ def get_tfidf(data):
 #Output: this dict has Latent Semantic Analysis topics (concepts) and topic words
 #To Do: Normalization with make_pipeline??? But make_pipeline has no components_
 def do_LSA(X, vectorizer): 
-  lsa = TruncatedSVD(n_components=3, n_iter=100)
+  lsa = TruncatedSVD(n_components=2, n_iter=100)
   lsa_results = lsa.fit(X)
   #dimen_reduc = lsa.transform(X)
   #print(dimen_reduc.shape) (84, 3)
@@ -27,23 +27,23 @@ def do_LSA(X, vectorizer):
   jDict = {"name": "flare", "children": []} #initialize dict for json
   for i, comp in enumerate(lsa.components_):
     #print(lsa_results.components_[0]) # V matrix [m x k]^Transposed, rows = terms, columns = concepts
-    #[ 0.00328614  0.00047173  0.00047173 ...,  0.0002086   0.0002086   0.0002086 ]
     termsInComp = zip(terms, comp)
-    sortedTerms = sorted(termsInComp, key=lambda x: x[1], reverse=True)[:10]
-    #print("Concept "+ str(i) + ": ")
+    sortedTerms = sorted(termsInComp, key=lambda x: x[1], reverse=True)[:5]
+    print("Concept "+ str(i) + ": ")
     running_name = 'concept'+str(i)
     concept_Dict = {"name": running_name, "children": []}
     jDict["children"].append(concept_Dict)
     for term in sortedTerms:
-      #print(term[0])
+      print(term[0])
       term_Dict = {"name": term[0], "size": 700}
       concept_Dict["children"].append(term_Dict)
+    print()
   jsonDict = re.sub('\'', '\"', str(jDict)) #json needs double quotes, not single quotes
   return jsonDict
 
 tfidf, tfidf_vectorizer = get_tfidf(data_samples)
-#print(tfidf.shape) #(84 x 184,867) with bigrams, (84, 431901) with trigrams 
+#print(tfidf.shape) 
 
 jsonDict = do_LSA(tfidf, tfidf_vectorizer)
-print(jsonDict)
+#print(jsonDict)
 
