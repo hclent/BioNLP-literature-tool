@@ -1,19 +1,19 @@
-import makeVecs as makeVecs
-import math
-import string
-import re
-from collections import Counter
+import naive_makeVecs as makeVecs
+import pickle
 
 
-#Input: publication
-#Output: normalized vector (counter), representing stringIn.
+#Load from pickled data_samples instead of filename
+def loadFromDataSamples(data_samples):
+    vecs_list = []
 
-#Example
-doc1 = "7.txt"
-doc2 = "92.txt"
-movie_review = "movie.txt"
+    for document in data_samples:
+        vectorCounter = makeVecs.text2vec(document)
+        #print(vectorCounter)
+        vecs_list.append(vectorCounter)
+    return vecs_list
 
 
+#Load txt file
 def loadMessages(filename):
     fcorpus = open(filename, 'r')
     fcorpus = fcorpus.read() #str
@@ -23,42 +23,50 @@ def loadMessages(filename):
     return (vectorCounter)
 
 
-vecs1 = loadMessages(doc1)
-vecs2 = loadMessages(doc2)
-vecs3= loadMessages(movie_review)
 
+# Print cosine similarity scores
+def cosineSimilarityScore(vector1, vector2):
 
-
-#Print cosine similarity scores
-def cosineSimilarityScore(vector1, vector2, vector3):
-
-    cosine_sim_score1 = (str(makeVecs.cosine(vector1, vector1)))
-    print("cos (vec1, vec1): " + cosine_sim_score1)
-
-
-    cosine_sim_score2 = (str(makeVecs.cosine(vector2, vector2)))
-    print("cos (vec2, vec2): " + cosine_sim_score2)
+    # cosine_sim_score1 = (str(makeVecs.cosine(vector1, vector1)))
+    # print("cos (vec1, vec1): " + cosine_sim_score1)
+    #
+    #
+    # cosine_sim_score2 = (str(makeVecs.cosine(vector2, vector2)))
+    # print("cos (vec2, vec2): " + cosine_sim_score2)
 
 
     cosine_sim_score_1_2 = (str(makeVecs.cosine(vector1, vector2)))
     print("cos (vec1, vec2): " + cosine_sim_score_1_2)
+    print("-------------------------------------------------------")
+    return cosine_sim_score_1_2
 
 
-    cosine_sim_score_1_3 = (str(makeVecs.cosine(vector1, vector3)))
-    print("cos (vec1, vec3): " + cosine_sim_score_1_3)
+
+star_trek = "/home/hclent/data/corpora/startrek/105.txt"
+vecs1 = loadMessages(star_trek)
+
+# doc2 = "/home/hclent/data/18269575/18269575_1.txt"
+# doc3 = "/home/hclent/data/18269575/18269575_2.txt"
+# vecs2 = loadMessages(doc2)
+# vecs3= loadMessages(doc3)
 
 
-    cosine_sim_score_2_3 = (str(makeVecs.cosine(vector2, vector3)))
-    print("cos (vec2, vec3): " + cosine_sim_score_2_3)
+data_samples = pickle.load(open("/home/hclent/data/18269575/data_samples_18269575.pickle", "rb")) #pre-processed
+
+vecs_list = loadFromDataSamples(data_samples)
+cosine_list = []
+for vec_n in vecs_list:
+    cosine_sim_score_1_2 = cosineSimilarityScore(vecs1, vec_n)
+    cosine_list.append(cosine_sim_score_1_2)
 
 
-cosineSimilarityScore(vecs1, vecs2, vecs3)
-
+print(cosine_list)
 
 
 ############### EXAMPLE #################
-# cos (vec1, vec1): 0.9999999999999983 #self
-# cos (vec2, vec2): 1.0000000000000064 #self
-# cos (vec1, vec2): 0.21345131811302565 #two scientific texts
-# cos (vec1, vec3): 0.03610515107865741 #scientific versus movie review
-# cos (vec2, vec3): 0.03499071664127394 #scientific versus movie review
+# cos (star_trek, star_trek): 0.9999999999999648 #self
+# cos (coge1, coge1): 0.9999999999999903  #self
+# cos (star_trek, coge1): 0.07009289426452932
+# cos (star_trek, coge2): 0.029406530815802755
+# cos (coge1, coge2): 0.6057148741444401
+

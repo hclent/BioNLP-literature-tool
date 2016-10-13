@@ -4,7 +4,7 @@ import string
 import nltk
 from nltk.corpus import stopwords
 
-#June 23, 2016, this code has been moved to the graveyard, since now I'm using tf-idf and hashvec from sklearn
+#Oct 13, 2016, this code has been moved to the graveyard, since now I'm using tf-idf and hashvec from sklearn
 
 #Vector functions for cosine similarity based classification/clustering
 #Vectors must be normalized in order for this to work!

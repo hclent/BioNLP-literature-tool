@@ -3,6 +3,11 @@ from gensim.models import Word2Vec
 import numpy as np
 from numpy import linalg as LA
 
+''' Implementaiton of Gensim's Word2Vec.
+  Trained Word2Vec for a Star Trek model and CoGe Model.
+  Will used trained Star Trek model for evaluation methods in mixed_cosineSim.py
+  '''
+
 
 logging.basicConfig(filename='.2vec.log',level=logging.DEBUG)
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -32,6 +37,7 @@ def create_model(path_to_sentences, model_name):
     print("* successfully made the model !!!")
     print("* saving the model ... ")
 
+    # if you need to add sentences:
     #more_sentences = MySentences('/home/hclent/data/18952863')
     #model.train(more_sentences)
 
@@ -117,28 +123,28 @@ def run_word2vec(path_to_sentences, model_name, num_docs):
             words.append(word)
     model = load_model(path_to_sentences, model_name) #(39605, 100) #100 features
     featureVec = makeFeatureVec(words, model, 100)
-    print("FEATURE MATRIX:")
-    print(featureVec)
+    #print("FEATURE MATRIX:")
+    #print(featureVec)
     num_docs = ['blah'] * num_docs #just need something for the length
     avgFeatureVecs = getAvgFeatureVecs(num_docs, model, 100)
-    print("AVERAGE FEATURE MATRIX: ")
-    print(avgFeatureVecs)
-    print("AVERAGE VECTOR")
+    #print("AVERAGE FEATURE MATRIX: ")
+    #print(avgFeatureVecs)
+    #print("AVERAGE VECTOR")
     average_vec = (avgFeatureVecs[0])
-    print(average_vec)
+    #print(average_vec)
 
     return average_vec
 
-print("STAR TREK: ")
-average_st = run_word2vec('/home/hclent/data/corpora/startrek/', 'startrek_model', 175)
-print("-------------------------------------------------------------------------------")
-print("COGE: ")
-average_coge = run_word2vec('/home/hclent/data/18269575', 'coge_model', 165)
-
-
-
-
-print("COSINE SIMILARITY: ")
-print("cos(star_trek, coge): " +  str( cosine_similarity(average_st, average_coge)) )
-print("cos(star_trek, star_trek): " + str(cosine_similarity(average_st, average_st))  )
-print("cos(coge, coge): "+ str(cosine_similarity(average_coge, average_coge))  )
+# print("STAR TREK: ")
+# average_st = run_word2vec('/home/hclent/data/corpora/startrek/', 'startrek_model', 175)
+# print("-------------------------------------------------------------------------------")
+# print("COGE: ")
+# average_coge = run_word2vec('/home/hclent/data/18269575', 'coge_model', 165)
+#
+#
+#
+#
+# print("COSINE SIMILARITY: ")
+# print("cos(star_trek, coge): " +  str( cosine_similarity(average_st, average_coge)) )
+# print("cos(star_trek, star_trek): " + str(cosine_similarity(average_st, average_st))  )
+# print("cos(coge, coge): "+ str(cosine_similarity(average_coge, average_coge))  )
