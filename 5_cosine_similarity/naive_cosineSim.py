@@ -1,19 +1,29 @@
-import naive_makeVecs as makeVecs
-import pickle
+import naive_makeVecs as makeVecs #mine
+import pickle, sys, os
+from urllib.request import urlopen
+
+# url = "http://www.gutenberg.org/cache/epub/3207/pg3207.txt"
+# response = urlopen(url)
+# raw = response.read().decode('utf8')
+# save_path = '/home/hclent/data/corpora/'  # must save to data, in proper file
+# completeName = os.path.join(save_path, 'leviathan.txt')
+# sys.stdout = open(completeName, "w")
+# print(raw)
 
 
-#Load from pickled data_samples instead of filename
+
+# Load from pickled data_samples instead of filename
 def loadFromDataSamples(data_samples):
     vecs_list = []
 
     for document in data_samples:
         vectorCounter = makeVecs.text2vec(document)
-        #print(vectorCounter)
+        # print(vectorCounter)
         vecs_list.append(vectorCounter)
     return vecs_list
 
 
-#Load txt file
+# Load txt file
 def loadMessages(filename):
     fcorpus = open(filename, 'r')
     fcorpus = fcorpus.read() #str
@@ -42,25 +52,38 @@ def cosineSimilarityScore(vector1, vector2):
 
 
 
-star_trek = "/home/hclent/data/corpora/startrek/105.txt"
-vecs1 = loadMessages(star_trek)
+# star_trek = "/home/hclent/data/corpora/startrek/105.txt"
+# vecs1 = loadMessages(star_trek)
 
-# doc2 = "/home/hclent/data/18269575/18269575_1.txt"
-# doc3 = "/home/hclent/data/18269575/18269575_2.txt"
-# vecs2 = loadMessages(doc2)
-# vecs3= loadMessages(doc3)
+# darwin = "/home/hclent/data/corpora/darwin.txt"
+# d_vecs = loadMessages(darwin)
+
+# frank = "/home/hclent/data/corpora/frankenstein.txt"
+# f_vecs = loadMessages(frank)
 
 
+# youth = "/home/hclent/data/corpora/youth.txt"
+# y_vecs = loadMessages(youth)
+
+lev = "/home/hclent/data/corpora/leviathan.txt"
+l_vecs = loadMessages(lev)
+
+
+gene = "/home/hclent/data/corpora/leviathan.txt"
+g_vecs = loadMessages(gene)
+
+#
 data_samples = pickle.load(open("/home/hclent/data/18269575/data_samples_18269575.pickle", "rb")) #pre-processed
-
+#
+#
 vecs_list = loadFromDataSamples(data_samples)
 cosine_list = []
 for vec_n in vecs_list:
-    cosine_sim_score_1_2 = cosineSimilarityScore(vecs1, vec_n)
+    cosine_sim_score_1_2 = cosineSimilarityScore(g_vecs, vec_n)
     cosine_list.append(cosine_sim_score_1_2)
-
-
-print(cosine_list)
+#
+#
+# print(cosine_list)
 
 
 ############### EXAMPLE #################
