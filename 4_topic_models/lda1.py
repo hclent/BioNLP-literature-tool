@@ -1,17 +1,17 @@
 from __future__ import print_function
 from time import time
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import re, json, pickle
 import pprint
 
 
-data_samples = pickle.load(open("/home/hclent/repos/Webdev-for-bioNLP-lit-tool/flask/static/coge_docs.pickle", "rb"))
+data_samples = pickle.load(open("/home/hclent/data/data_samples/data_samples_18952863+18269575+21364914.pickle", "rb"))
 
 
 def get_tfidf(data): #data should be a list of strings for the documents 
   print("* Preparing to vectorize data ...")
-  tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(2, 3), norm='l2')
+  tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(3, 4), norm='l2')
   print("* Fitting data to vector ...")
   tfidf = tfidf_vectorizer.fit_transform(data)
   print("* Successfully fit data to the vector !!! ")
@@ -46,7 +46,7 @@ def topics_lda(tf_vectorizer, lda):
   print("\nTopics in LDA model:")
   tf_feature_names = tf_vectorizer.get_feature_names()
   jsonDict = print_top_words(lda, tf_feature_names, 6)
-  #print(tf_feature_names)
+  print(tf_feature_names)
   return jsonDict
 
 
@@ -55,7 +55,7 @@ tfidf, tfidf_vectorizer = get_tfidf(data_samples)
 lda = fit_lda(tfidf)
 #print("############## RESULTS ###############")
 jsonDict = topics_lda(tfidf_vectorizer, lda)
-print(jsonDict)
+#print(jsonDict)
 #with open("coge_lda1.json", "w") as out:
 #    json.dump(jsonDict, out)
 
